@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -20,16 +23,18 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "SEAT")
 public class Seat {
+
     @Id
-    @GeneratedValue(generator="increment")
-    @GenericGenerator(name="increment", strategy = "increment")
-    private int no;
+    private int id;
+
+    @Column(name = "ROW_ID", nullable = false)
+    private int rowId;
 
     @Column(name = "STATUS", nullable = false)
     private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private VenueLevel venueLevel;
+    private Level level;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private SeatHold seatHold;

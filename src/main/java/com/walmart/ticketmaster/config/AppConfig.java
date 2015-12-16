@@ -77,8 +77,8 @@ public class AppConfig {
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
         builder.setName("H2-Test-DB");
         EmbeddedDatabase db = builder.setType(EmbeddedDatabaseType.H2)
-                /*.addScript("classpath:dbscript/my-schema.sql")
-                .addScript("classpath:dbscript/my-test-data.sql")*/.build();
+                .addScript("classpath:db-script/ddl.sql")
+                .addScript("classpath:db-script/dml.sql").build();
         log.info("Initiating the database from dbscript.");
         return db;
     }

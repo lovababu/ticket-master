@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -21,7 +22,7 @@ import java.util.Set;
 @Getter
 @Entity
 @Table(name = "VENUE_LEVEL")
-public class VenueLevel {
+public class Level {
     @Id
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
@@ -33,6 +34,6 @@ public class VenueLevel {
     @Column(name = "PRICE")
     private BigDecimal price;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "venueLevel")
-    private Set<Seat> seats;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "level")
+    private List<Seat> seats;
 }
