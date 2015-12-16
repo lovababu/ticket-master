@@ -23,9 +23,10 @@ import java.util.Set;
 public class SeatHold {
 
     @Id
+    @Column(name = "HOLD_ID")
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
-    private int id;
+    private int holdId;
 
     @Column(name = "EMAIL", nullable = false)
     private String email;

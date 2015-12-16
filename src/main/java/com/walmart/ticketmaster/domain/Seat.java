@@ -21,7 +21,8 @@ import javax.persistence.Table;
 public class Seat {
 
     @Id
-    private int id;
+    @Column(name = "NUM")
+    private int num;
 
     @Column(name = "ROW_ID", nullable = false)
     private int rowId;
@@ -30,10 +31,10 @@ public class Seat {
     private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "LEVEL_ID", nullable = false)
+    @JoinColumn(name = "ID", nullable = false)
     private Level level;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "POLICY_OID", nullable = false)
+    @JoinColumn(name = "HOLD_ID", nullable = false)
     private SeatHold seatHold;
 }

@@ -20,13 +20,13 @@ import java.util.List;
 @Setter
 @Getter
 @Entity
-@Table(name = "VENUE_LEVEL")
+@Table(name = "LEVEL")
 public class Level {
     @Id
     @Column(name = "ID")
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
-    private int level;
+    private int id;
 
     @Column(name = "NAME")
     private String name;
