@@ -6,6 +6,7 @@ import com.walmart.ticketmaster.exception.InvalidDataException;
 import com.walmart.ticketmaster.service.SeatHoldService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ public class SeatHoldServiceImpl implements SeatHoldService {
     private SeatHoldDao seatHoldDao;
 
     @Override
+    @Transactional(readOnly = true)
     public int numSeatsAvailable(Optional<Integer> venueLevel) throws InvalidDataException {
         if (venueLevel.isPresent()) {
             validateVenueLevelId(venueLevel.get());

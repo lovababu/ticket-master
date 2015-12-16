@@ -13,7 +13,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Durga on 12/15/2015.
@@ -24,6 +23,7 @@ import java.util.Set;
 @Table(name = "VENUE_LEVEL")
 public class Level {
     @Id
+    @Column(name = "ID")
     @GeneratedValue(generator = "increment")
     @GenericGenerator(name = "increment", strategy = "increment")
     private int level;

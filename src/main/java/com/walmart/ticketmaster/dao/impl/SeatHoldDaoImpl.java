@@ -2,6 +2,7 @@ package com.walmart.ticketmaster.dao.impl;
 
 import com.walmart.ticketmaster.dao.SeatHoldDao;
 import com.walmart.ticketmaster.domain.SeatHold;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,12 +19,17 @@ public class SeatHoldDaoImpl implements SeatHoldDao {
 
     @Override
     public int seatsAvailable() {
-        return 0;
+        Query query = sessionFactory.getCurrentSession().createQuery("select count(*) From Seat s where s.status = :status");
+        query.setString("status", "Available");
+        return (Integer)query.uniqueResult();
     }
 
     @Override
     public int seatsAvailable(Integer venueLevel) {
-        return 0;
+        Query query = sessionFactory.getCurrentSession().createQuery("select count(*) From Seat s where s.level.level = :levelId and s.status = :status");
+        query.setInteger("levelId", venueLevel);
+        query.setString("status", "Available");
+        return (Integer)query.uniqueResult();
     }
 
     @Override

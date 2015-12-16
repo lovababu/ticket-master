@@ -1,6 +1,5 @@
-package com.walmart.ticketmaster.test;
+package com.walmart.ticketmaster.config;
 
-import com.walmart.ticketmaster.config.AppConfig;
 import com.walmart.ticketmaster.service.SeatHoldService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
