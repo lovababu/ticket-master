@@ -1,17 +1,24 @@
 package com.walmart.ticketmaster.dao;
 
+import com.walmart.ticketmaster.domain.Seat;
 import com.walmart.ticketmaster.domain.SeatHold;
+import com.walmart.ticketmaster.util.constants.SeatStatusEnum;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Durga on 12/15/2015.
  */
 public interface SeatHoldDao {
 
-    int seatsAvailable();
+    int seatsAvailable(Optional<SeatStatusEnum> seatStatusEnum);
 
-    int seatsAvailable(Integer venueLevel);
+    int seatsAvailable(int venueLevel, Optional<SeatStatusEnum> seatStatusEnum);
 
-    SeatHold findAndHoldSeats(SeatHold seatHold);
+    List<Seat> findSeats(int numSeats, int level, Optional<SeatStatusEnum> seatStatusEnum);
 
-    String reserveSeats(int seatHoldId);
+    SeatHold holdSeats(SeatHold seatHold);
+
+    String reserveSeats(SeatHold seatHoldId);
 }

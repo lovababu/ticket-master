@@ -37,8 +37,8 @@ public class AppConfig {
     private String showSql;
     @Value("${hibernate.generateStatistics}")
     private String generateStatistics;
-    @Value("hibernate.hbm2ddl.auto")
-    private String hibernateHbm2ddl;
+    /*@Value("hibernate.hbm2ddl.auto")
+    private String hibernateHbm2ddl;*/
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -95,7 +95,7 @@ public class AppConfig {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", hibernateDialect);
         properties.put("hibernate.show_sql", showSql);
-        properties.put("hibernate.hbm2ddl.auto", hibernateHbm2ddl);
+        //properties.put("hibernate.hbm2ddl.auto", hibernateHbm2ddl);
         properties.put("hibernate.cache.use_second_level_cache", false);
         properties.put("hibernate.generate_statistics", generateStatistics);
         return properties;

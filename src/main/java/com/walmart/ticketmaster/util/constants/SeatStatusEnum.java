@@ -1,11 +1,11 @@
-package com.walmart.ticketmaster.util;
+package com.walmart.ticketmaster.util.constants;
 
 /**
  * Created by Durga on 12/15/2015.
  */
 public enum  SeatStatusEnum {
 
-    AVAILABLE("available"), HOLD("hold"), SOLD("sold");
+    AVAILABLE("A"), HOLD("H"), SOLD("S");
 
     private final String status;
 

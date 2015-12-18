@@ -2,12 +2,10 @@ package com.walmart.ticketmaster.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -24,8 +22,8 @@ import java.util.List;
 public class Level {
     @Id
     @Column(name = "ID")
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
+    /*@GeneratedValue(generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")*/
     private int id;
 
     @Column(name = "NAME")
