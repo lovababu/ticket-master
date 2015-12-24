@@ -11,7 +11,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
@@ -61,8 +60,7 @@ public class SeatHoldDaoImpl implements SeatHoldDao {
 
     @Override
     public SeatHold holdSeats(SeatHold seatHold) {
-        Serializable id = sessionFactory.getCurrentSession().save(seatHold);
-        seatHold.setHoldId((Integer)id);
+        sessionFactory.getCurrentSession().saveOrUpdate(seatHold);
         return seatHold;
     }
 

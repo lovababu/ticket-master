@@ -71,6 +71,7 @@ public class SeatHoldServiceImpl implements SeatHoldService {
         seatHold.setReserved(false);
         seatHold.setHoldTime(Calendar.getInstance().getTime());
         for (Seat s : holdSeats) {
+            System.out.println("Seat Num: " + s.getNum());
             s.setStatus(SeatStatusEnum.HOLD.getStatus());
         }
         seatHold.setSeats(new HashSet<>(holdSeats));

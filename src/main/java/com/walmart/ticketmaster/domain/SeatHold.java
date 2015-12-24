@@ -46,7 +46,6 @@ public class SeatHold {
     @Temporal(TemporalType.TIMESTAMP)
     private Date holdTime;
 
-    @Column(name = "SEAT_ID")
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "SEAT_HOLD_ID_MAP",
             joinColumns = {@JoinColumn(name = "HOLD_ID", nullable = false)},
