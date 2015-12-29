@@ -4,16 +4,20 @@ import com.walmart.ticketmaster.dao.SeatHoldDao;
 import com.walmart.ticketmaster.domain.Seat;
 import com.walmart.ticketmaster.domain.SeatHold;
 import com.walmart.ticketmaster.util.constants.SeatStatusEnum;
-import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
-import org.hibernate.SessionFactory;
+import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Durga on 12/15/2015.
@@ -53,31 +57,72 @@ public class SeatHoldDaoImpl implements SeatHoldDao {
         criteria.add(Restrictions.eq("seat.status", seatStatusEnum.isPresent()
                 ? seatStatusEnum.get().getStatus() : SeatStatusEnum.AVAILABLE.getStatus()));
         criteria.setFirstResult(0);
-        criteria.setMaxResults(4);
+        criteria.setMaxResults(numSeats);
         System.out.println("SeatHoldDaoImpl.findSeats" + criteria.toString());
-        return criteria.list();
+        List<Seat> seats = criteria.list();
+        return seats;
     }
 
     @Override
-    public SeatHold holdSeats(SeatHold seatHold) {
-        sessionFactory.getCurrentSession().saveOrUpdate(seatHold);
+    public SeatHold holdSeats(SeatHold seatHold, Set<Seat> holdSeats) {
+        Session session = sessionFactory.getCurrentSession();
+        session.clear();
+        Serializable id = session.save(seatHold);
+
+        for (Seat seat : holdSeats) {
+            //session.update(seat);
+            SQLQuery seatUpdateQuery = session.createSQLQuery("UPDATE SEAT SET STATUS = :status WHERE NUM = :seatNum and LEVEL_ID = :levelId");
+            seatUpdateQuery.setString("status", SeatStatusEnum.HOLD.getStatus());
+            seatUpdateQuery.setInteger("seatNum", seat.getNum());
+            seatUpdateQuery.setInteger("levelId", seat.getLevel().getId());
+            int updateCnt = seatUpdateQuery.executeUpdate();
+            System.out.println("No of seats updated: " + updateCnt);
+
+            SQLQuery sqlQuery = session.createSQLQuery("INSERT INTO SEAT_HOLD_ID_MAP (HOLD_ID, SEAT_ID) VALUES (:holdId, :seatId)");
+            sqlQuery.setInteger("holdId", (int) id);
+            sqlQuery.setInteger("seatId", seat.getNum());
+            int inserted = sqlQuery.executeUpdate();
+            System.out.println("Total records inserted in SEAT_HOLD_ID_MAP is: " + inserted);
+        }
+
+        seatHold.setHoldId((int) id);
         return seatHold;
+    }
+
+    @Override
+    public SeatHold isSeatHoldExist(int seatHoldId, String email) {
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(SeatHold.class, "seatHold");
+        criteria.add(Restrictions.eq("seatHold.holdId", seatHoldId))
+                .add(Restrictions.eq("seatHold.email", email));
+        SeatHold seatHold = (SeatHold) criteria.uniqueResult();
+        return seatHold;
+    }
+
+    @Override
+    public boolean validateHoldTime(SeatHold seatHold) {
+
+        long MAX_DURATION = TimeUnit.MILLISECONDS.convert(15, TimeUnit.MINUTES);
+        long duration = System.currentTimeMillis() - seatHold.getHoldTime().getTime();
+        //15*60*1000
+        if (duration <= MAX_DURATION) {
+            return true;
+        }
+        return false;
     }
 
 
     @Override
     public String reserveSeats(SeatHold seatHold) {
         SQLQuery sqlQuery = sessionFactory.getCurrentSession()
-                .createSQLQuery("select seatHold from SEAT_HOLD seatHold where " +
-                        "seatHold.HOLD_ID = :holdId and seatHold.EMAIL = :email");
+                .createSQLQuery("SELECT SEAT_ID FROM SEAT_HOLD_ID_MAP WHERE HOLD_ID = :holdId");
         sqlQuery.setInteger("holdId", seatHold.getHoldId());
-        sqlQuery.setString("email", seatHold.getEmail());
-        seatHold = (SeatHold) sqlQuery.uniqueResult();
-        if (seatHold != null) {
+        List<BigDecimal> list = (List<BigDecimal>) sqlQuery.list();
+        if (!CollectionUtils.isEmpty(list)) {
             int count = 0;
-            for (Seat seat : seatHold.getSeats()) {
-                seat.setStatus(SeatStatusEnum.SOLD.getStatus());
-                sessionFactory.getCurrentSession().saveOrUpdate(seat);
+            for (BigDecimal seatNum : list) {
+                SQLQuery sqlQuery1 = sessionFactory.getCurrentSession().createSQLQuery("UPDATE SEAT SET STATUS = :status WHERE NUM = :seatNum");
+                sqlQuery1.setString("status", SeatStatusEnum.SOLD.getStatus());
+                sqlQuery1.setBigDecimal("seatNum", seatNum);
                 count++;
                 if (count % 5 == 0) {
                     sessionFactory.getCurrentSession().flush();
@@ -85,10 +130,9 @@ public class SeatHoldDaoImpl implements SeatHoldDao {
                 }
             }
             seatHold.setReserved(true);
-            sessionFactory.getCurrentSession().saveOrUpdate(seatHold);
-        } else {
-            return "Invalid Combination of SeatHoldId and Email.";
+            sessionFactory.getCurrentSession().merge(seatHold);
         }
+
         return "Your seats has been reserved, thanks for choosing us.";
     }
 }

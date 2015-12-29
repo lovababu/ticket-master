@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
@@ -67,6 +68,11 @@ public class AppConfig {
         return sessionFactoryBean.getObject();
     }
 
+    @Bean
+    public JdbcTemplate jdbcTemplate() {
+       return new JdbcTemplate(dataSource());
+    }
+
     /**
      * Spring provided H2 Embedded Database. Read the dbscript and initiates the Database with the name H2-Test-DB.
      *
@@ -81,6 +87,7 @@ public class AppConfig {
                 .addScript("classpath:db-script/dml.sql").build();
         log.info("Initiating the database from dbscript.");
         return db;
+
     }
 
 

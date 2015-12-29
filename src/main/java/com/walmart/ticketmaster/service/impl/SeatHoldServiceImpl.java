@@ -71,20 +71,30 @@ public class SeatHoldServiceImpl implements SeatHoldService {
         seatHold.setReserved(false);
         seatHold.setHoldTime(Calendar.getInstance().getTime());
         for (Seat s : holdSeats) {
-            System.out.println("Seat Num: " + s.getNum());
+            System.out.println("Seat Num: " + s.getNum() + ", Level: " + s.getLevel().getId());
             s.setStatus(SeatStatusEnum.HOLD.getStatus());
         }
-        seatHold.setSeats(new HashSet<>(holdSeats));
-        seatHold = seatHoldDao.holdSeats(seatHold);
+        seatHold = seatHoldDao.holdSeats(seatHold, new HashSet<>(holdSeats));
         return seatHold;
     }
 
     @Override
-    public String reserveSeats(int seatHoldId, String customerEmail) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public String reserveSeats(int seatHoldId, String customerEmail) throws InvalidDataException {
         if (seatHoldId <= 0 || customerEmail.isEmpty()) {
-            return null;
+            return "SeatHoldId and customerEmail mandatory.";
         }
-        return null;
+
+        SeatHold seatHold = seatHoldDao.isSeatHoldExist(seatHoldId, customerEmail);
+        if (seatHold == null) {
+            return "No seats Hold for supplied HoldId and Email.";
+        }
+
+        if (seatHoldDao.validateHoldTime(seatHold)) {
+            return seatHoldDao.reserveSeats(seatHold);
+        } else {
+            return "Sorry, Expired the time elapsed to hold seats. Try again.";
+        }
     }
 
     private void validateVenueLevelId(Integer venueLevelId) throws InvalidDataException {

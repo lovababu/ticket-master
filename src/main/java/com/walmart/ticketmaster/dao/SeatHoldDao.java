@@ -6,6 +6,7 @@ import com.walmart.ticketmaster.util.constants.SeatStatusEnum;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by Durga on 12/15/2015.
@@ -18,7 +19,11 @@ public interface SeatHoldDao {
 
     List<Seat> findSeats(int numSeats, int level, Optional<SeatStatusEnum> seatStatusEnum);
 
-    SeatHold holdSeats(SeatHold seatHold);
+    SeatHold holdSeats(SeatHold seatHold, Set<Seat> holdSeats);
 
-    String reserveSeats(SeatHold seatHoldId);
+    SeatHold isSeatHoldExist(int seatHoldId, String email);
+
+    boolean validateHoldTime(SeatHold seatHold);
+
+    String reserveSeats(SeatHold seatHold);
 }

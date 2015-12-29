@@ -29,9 +29,6 @@ public class Seat {
     @JoinColumn(name = "LEVEL_ID", nullable = false, referencedColumnName = "ID")
     private Level level;
 
-    @OneToMany(mappedBy = "seats", fetch = FetchType.LAZY)
-    private Set<SeatHold> seatHold;
-
     @Override
     public boolean equals(Object obj) {
         Seat inComing = (Seat) obj;
